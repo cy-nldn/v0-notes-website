@@ -3,57 +3,43 @@
 import { useState } from 'react'
 import { UploadAuth } from '@/components/UploadAuth'
 import { UploadForm } from '@/components/UploadForm'
-import { Terminal } from '@/components/Terminal'
 import Link from 'next/link'
 
 export default function UploadPage() {
   const [authenticated, setAuthenticated] = useState(false)
 
-  if (!authenticated) {
-    return (
-      <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-        <div className="max-w-2xl mx-auto space-y-8 mt-16">
-          <UploadAuth onAuth={() => setAuthenticated(true)} />
-
-          <Terminal>
-            <div className="flex items-center justify-between">
-              <p className="text-muted-foreground text-xs">
-                $ back to <Link href="/" className="text-foreground hover:text-secondary underline">notes list</Link>
-              </p>
-            </div>
-          </Terminal>
-        </div>
-      </main>
-    )
-  }
-
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-      <div className="max-w-2xl mx-auto space-y-8">
+    <main className="min-h-screen bg-background text-foreground font-mono">
+      <div className="max-w-4xl mx-auto px-8 py-10">
+
         {/* Header */}
-        <Terminal title="upload_new_notes">
-          <div className="space-y-2">
-            <p className="text-foreground font-bold">$ preparing upload interface</p>
-            <p className="text-muted-foreground text-sm">
-              fill out the form below to share your notes
-            </p>
+        <div className="flex items-start justify-between mb-1">
+          <div>
+            <span className="font-bold text-foreground">misc. maths notes - chris</span>
+            <span className="text-muted-foreground text-sm ml-3">
+              {authenticated ? 'upload' : 'restricted'}
+            </span>
           </div>
-        </Terminal>
+          <Link
+            href="/"
+            className="border border-muted-foreground text-muted-foreground text-sm px-3 py-0.5 hover:border-foreground hover:text-foreground transition-colors"
+          >
+            / back
+          </Link>
+        </div>
 
-        {/* Upload Form */}
-        <UploadForm />
+        <p className="text-muted-foreground text-sm mt-2 mb-6">
+          {authenticated ? 'add a new note to the list.' : 'this area is password protected.'}
+        </p>
 
-        {/* Footer */}
-        <Terminal>
-          <div className="flex items-center justify-between">
-            <p className="text-muted-foreground text-xs">
-              $ back to <Link href="/" className="text-foreground hover:text-secondary underline">notes list</Link>
-            </p>
-            <p className="text-muted-foreground text-xs">
-              $ max file size: 50MB | only PDF
-            </p>
-          </div>
-        </Terminal>
+        <hr className="border-border mb-8" />
+
+        {authenticated ? (
+          <UploadForm />
+        ) : (
+          <UploadAuth onAuth={() => setAuthenticated(true)} />
+        )}
+
       </div>
     </main>
   )

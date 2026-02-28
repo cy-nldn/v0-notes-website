@@ -2,7 +2,39 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Terminal } from './Terminal'
+
+const TOPICS = [
+  'gamma/beta',
+  'cauchy-riemann eqs',
+  'dilog/digamma',
+  'yukawa derivation (non-rigorous)',
+  'basic dynamics/dim analysis',
+  'some calc iii',
+  'general forces',
+  'construction of natural numbers',
+  'functional eqs',
+  'construction of multiplication',
+  'arithmetic function/mobius inverse',
+  'manifolds',
+  'kepler problem',
+  'partial sums/divisor function',
+  'intro to galois',
+  'some groups',
+  'basic graph theory',
+  'spectral theorem for hermitian matrices',
+  'analytic number theory',
+  'rank 1/2 tensors',
+  'jones vectors/em polarisation',
+  'symplectic LA',
+  'symplectic manifolds',
+  'symplectomorphisms/moser theorem',
+  'relative moser and darboux',
+  'euler lagrange',
+  'polarisation/su(2)',
+  'quasihomomorphisms',
+  'noetherian/artinian algebras',
+  'lagrangian manifolds',
+]
 
 export function UploadForm() {
   const router = useRouter()
@@ -14,7 +46,6 @@ export function UploadForm() {
     title: '',
     subject: '',
     description: '',
-    uploaded_by: '',
     file: null as File | null,
   })
 
@@ -25,36 +56,34 @@ export function UploadForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        setError('$ error: only PDF files allowed')
-        return
-      }
-      if (file.size > 50 * 1024 * 1024) {
-        setError('$ error: file too large (max 50MB)')
-        return
-      }
-      setForm(prev => ({ ...prev, file }))
-      setError(null)
+    if (!file) return
+    if (file.type !== 'application/pdf') {
+      setError('only PDF files are allowed')
+      return
     }
+    if (file.size > 50 * 1024 * 1024) {
+      setError('file too large (max 50MB)')
+      return
+    }
+    setForm(prev => ({ ...prev, file }))
+    setError(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.title || !form.subject || !form.file) {
+      setError('title, topic, and file are required')
+      return
+    }
     setLoading(true)
     setError(null)
-    setSuccess(false)
 
     try {
-      if (!form.title || !form.subject || !form.file) {
-        throw new Error('$ error: missing required fields')
-      }
-
       const formData = new FormData()
       formData.append('title', form.title)
       formData.append('subject', form.subject)
       formData.append('description', form.description)
-      formData.append('uploaded_by', form.uploaded_by || 'anonymous')
+      formData.append('uploaded_by', 'chris')
       formData.append('file', form.file)
 
       const response = await fetch('/api/upload', {
@@ -64,135 +93,115 @@ export function UploadForm() {
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.message || '$ error: upload failed')
+        throw new Error(data.message || 'upload failed')
       }
 
       setSuccess(true)
-      setForm({ title: '', subject: '', description: '', uploaded_by: '', file: null })
-      setTimeout(() => {
-        router.push('/')
-      }, 1500)
+      setTimeout(() => router.push('/'), 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : '$ error: something went wrong')
+      setError(err instanceof Error ? err.message : 'something went wrong')
     } finally {
       setLoading(false)
     }
   }
 
+  if (success) {
+    return <p className="text-muted-foreground text-sm">uploaded. redirecting...</p>
+  }
+
   return (
-    <Terminal title="upload">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
-        {error && (
-          <div className="text-destructive border border-destructive p-3 font-mono text-sm">
-            {error}
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
+
+      {error && (
+        <p className="text-destructive text-sm">{error}</p>
+      )}
+
+      {/* Title */}
+      <div>
+        <label className="block text-muted-foreground text-xs mb-1 uppercase tracking-widest">
+          title <span className="text-destructive">*</span>
+        </label>
+        <input
+          type="text"
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          placeholder="e.g. Cauchy-Riemann Equations"
+          className="w-full bg-background border border-border text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-muted-foreground"
+          disabled={loading}
+        />
+      </div>
+
+      {/* Topic */}
+      <div>
+        <label className="block text-muted-foreground text-xs mb-1 uppercase tracking-widest">
+          topic <span className="text-destructive">*</span>
+        </label>
+        <select
+          name="subject"
+          value={form.subject}
+          onChange={handleChange}
+          className="w-full bg-background border border-border text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-muted-foreground"
+          disabled={loading}
+        >
+          <option value="">-- select topic --</option>
+          {TOPICS.map(t => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className="block text-muted-foreground text-xs mb-1 uppercase tracking-widest">
+          description
+        </label>
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="optional notes or context"
+          className="w-full bg-background border border-border text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-muted-foreground h-20 resize-none"
+          disabled={loading}
+        />
+      </div>
+
+      {/* File */}
+      <div>
+        <label className="block text-muted-foreground text-xs mb-1 uppercase tracking-widest">
+          pdf file <span className="text-destructive">*</span>
+        </label>
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={handleFileChange}
+          className="w-full bg-background border border-border text-foreground px-3 py-2 font-mono text-sm focus:outline-none file:mr-4 file:bg-transparent file:border-0 file:text-muted-foreground file:font-mono file:text-sm cursor-pointer"
+          disabled={loading}
+        />
+        {form.file && (
+          <p className="text-muted-foreground text-xs mt-1">
+            {form.file.name} — {(form.file.size / 1024 / 1024).toFixed(2)}MB
+          </p>
         )}
+      </div>
 
-        {success && (
-          <div className="text-foreground border border-foreground p-3 font-mono text-sm bg-foreground/10">
-            $ upload successful! redirecting...
-          </div>
-        )}
+      {/* Actions */}
+      <div className="flex gap-4 pt-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="border border-muted-foreground text-muted-foreground text-sm px-4 py-1 hover:border-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          {loading ? 'uploading...' : 'upload'}
+        </button>
+        <a
+          href="/"
+          className="border border-border text-muted-foreground text-sm px-4 py-1 hover:border-muted-foreground hover:text-foreground transition-colors"
+        >
+          cancel
+        </a>
+      </div>
 
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ title <span className="text-destructive">*</span>
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            placeholder="e.g., Calculus Chapter 3"
-            className="w-full bg-background border-2 border-foreground text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-secondary"
-            disabled={loading}
-          />
-        </div>
-
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ subject <span className="text-destructive">*</span>
-          </label>
-          <select
-            name="subject"
-            value={form.subject}
-            onChange={handleChange}
-            className="w-full bg-background border-2 border-foreground text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-secondary"
-            disabled={loading}
-          >
-            <option value="">-- select subject --</option>
-            <option value="Calculus">Calculus</option>
-            <option value="Linear Algebra">Linear Algebra</option>
-            <option value="Discrete Math">Discrete Math</option>
-            <option value="Geometry">Geometry</option>
-            <option value="Statistics">Statistics</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ description
-          </label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="optional: add any notes or context"
-            className="w-full bg-background border-2 border-foreground text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-secondary h-24 resize-none"
-            disabled={loading}
-          />
-        </div>
-
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ uploaded by
-          </label>
-          <input
-            type="text"
-            name="uploaded_by"
-            value={form.uploaded_by}
-            onChange={handleChange}
-            placeholder="optional: your name or email"
-            className="w-full bg-background border-2 border-foreground text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-secondary"
-            disabled={loading}
-          />
-        </div>
-
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ pdf file <span className="text-destructive">*</span>
-          </label>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={handleFileChange}
-            className="w-full bg-background border-2 border-foreground text-foreground px-3 py-2 font-mono text-sm focus:outline-none cursor-pointer"
-            disabled={loading}
-          />
-          {form.file && (
-            <p className="text-secondary text-sm mt-2">
-              $ file selected: {form.file.name} ({(form.file.size / 1024 / 1024).toFixed(2)}MB)
-            </p>
-          )}
-        </div>
-
-        <div className="flex gap-4 pt-4">
-          <button
-            type="submit"
-            disabled={loading || success}
-            className="bg-foreground text-background px-6 py-2 font-bold hover:bg-secondary hover:text-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? '$ uploading...' : '$ upload'}
-          </button>
-          <a
-            href="/"
-            className="bg-background border-2 border-foreground text-foreground px-6 py-2 font-bold hover:bg-foreground hover:text-background transition-colors inline-block"
-          >
-            $ cancel
-          </a>
-        </div>
-      </form>
-    </Terminal>
+    </form>
   )
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Terminal } from './Terminal'
 
 interface UploadAuthProps {
   onAuth: () => void
@@ -24,10 +23,7 @@ export function UploadAuth({ onAuth }: UploadAuthProps) {
         body: JSON.stringify({ password }),
       })
 
-      if (!response.ok) {
-        throw new Error('invalid password')
-      }
-
+      if (!response.ok) throw new Error('invalid password')
       onAuth()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'authentication failed')
@@ -37,41 +33,32 @@ export function UploadAuth({ onAuth }: UploadAuthProps) {
   }
 
   return (
-    <Terminal title="authentication_required">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-sm">
-        <p className="text-muted-foreground text-sm">
-          $ this upload area is password protected
-        </p>
-
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-sm">
+      <div>
+        <label className="block text-muted-foreground text-xs mb-1 uppercase tracking-widest">
+          password
+        </label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full bg-background border border-border text-foreground px-3 py-2 font-mono text-sm focus:outline-none focus:border-muted-foreground"
+          placeholder="enter password"
+          disabled={loading}
+          autoFocus
+        />
         {error && (
-          <div className="text-destructive border border-destructive p-3 font-mono text-sm">
-            $ error: {error}
-          </div>
+          <p className="text-destructive text-xs mt-2">{error}</p>
         )}
+      </div>
 
-        <div>
-          <label className="block text-foreground font-bold text-sm mb-2">
-            $ password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-muted text-foreground px-3 py-2 font-mono text-sm border border-primary focus:outline-none focus:border-foreground"
-            placeholder="enter password"
-            disabled={loading}
-            autoFocus
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || !password}
-          className="bg-foreground text-background px-6 py-2 font-bold hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? '$ verifying...' : '$ unlock'}
-        </button>
-      </form>
-    </Terminal>
+      <button
+        type="submit"
+        disabled={loading || !password}
+        className="border border-muted-foreground text-muted-foreground text-sm px-4 py-1 hover:border-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+      >
+        {loading ? 'verifying...' : 'unlock'}
+      </button>
+    </form>
   )
 }
