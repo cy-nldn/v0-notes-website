@@ -56,9 +56,8 @@ export async function POST(request: NextRequest) {
         subject,
         description: description || null,
         file_path: storageData.path,
-        file_name: file.name,
         file_size: file.size,
-        uploaded_by: uploadedBy || 'anonymous',
+        uploaded_by: uploadedBy || 'chris',
         view_count: 0,
       })
       .select()
