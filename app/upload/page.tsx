@@ -1,8 +1,32 @@
+'use client'
+
+import { useState } from 'react'
+import { UploadAuth } from '@/components/UploadAuth'
 import { UploadForm } from '@/components/UploadForm'
 import { Terminal } from '@/components/Terminal'
 import Link from 'next/link'
 
 export default function UploadPage() {
+  const [authenticated, setAuthenticated] = useState(false)
+
+  if (!authenticated) {
+    return (
+      <main className="min-h-screen bg-background text-foreground p-6 font-mono">
+        <div className="max-w-2xl mx-auto space-y-8 mt-16">
+          <UploadAuth onAuth={() => setAuthenticated(true)} />
+
+          <Terminal>
+            <div className="flex items-center justify-between">
+              <p className="text-muted-foreground text-xs">
+                $ back to <Link href="/" className="text-foreground hover:text-secondary underline">notes list</Link>
+              </p>
+            </div>
+          </Terminal>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground p-6 font-mono">
       <div className="max-w-2xl mx-auto space-y-8">
