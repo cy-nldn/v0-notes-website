@@ -1,6 +1,9 @@
+'use client'
+
 import { NotesList } from '@/components/NotesList'
 import { Terminal } from '@/components/Terminal'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import type { Note } from '@/lib/supabase'
 
@@ -9,27 +12,35 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-async function getNotes(): Promise<Note[]> {
-  try {
-    const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .order('created_at', { ascending: false })
+export default function Home() {
+  const [notes, setNotes] = useState<Note[]>([])
+  const [loading, setLoading] = useState(true)
 
-    if (error) {
-      console.error('Error fetching notes:', error)
-      return []
+  useEffect(() => {
+    getNotes()
+  }, [])
+
+  async function getNotes() {
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching notes:', error)
+        setNotes([])
+      } else {
+        setNotes(data || [])
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setNotes([])
+    } finally {
+      setLoading(false)
     }
-
-    return data || []
-  } catch (error) {
-    console.error('Error:', error)
-    return []
   }
-}
-
-export default async function Home() {
-  const notes = await getNotes()
 
   return (
     <main className="min-h-screen bg-background text-foreground p-6 font-mono">
@@ -51,10 +62,11 @@ export default async function Home() {
                 $ upload notes
               </Link>
               <button
-                onClick={() => window.location.reload()}
-                className="bg-background border-2 border-foreground text-foreground px-6 py-2 font-bold hover:bg-foreground hover:text-background transition-colors"
+                onClick={() => getNotes()}
+                className="bg-background border-2 border-foreground text-foreground px-6 py-2 font-bold hover:bg-foreground hover:text-background transition-colors disabled:opacity-50"
+                disabled={loading}
               >
-                $ refresh
+                {loading ? '$ loading...' : '$ refresh'}
               </button>
             </div>
           </div>
