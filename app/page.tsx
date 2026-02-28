@@ -80,10 +80,10 @@ export default async function Home() {
   > ^ <     (  uu )   (  vv  )   (( >< ))  
    cat       dog       rabbit     dragon   
 
-   /\\_______/\\                             
-  / |  . .  | \\  <-- tiger                 
- /  |  .v.  |  \\                           
-(___|_______|___)                          `}</pre>
+   /\\_______/\\          (\\(\\               
+  / |  . .  | \\  <--   (='.')  tiger       
+ /  |  .v.  |  \\       (")(")              
+(___|_______|___)    @}-,-'-- flower        `}</pre>
 
         {/* Description */}
         <p className="text-muted-foreground text-sm mb-6">
