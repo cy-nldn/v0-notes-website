@@ -74,10 +74,16 @@ export default async function Home() {
           </a>
         </div>
 
-        {/* ASCII cat */}
-        <pre className="text-muted-foreground text-xs leading-tight mt-4 mb-3 select-none">{`  /\\_/\\  
- ( o.o ) 
-  > ^ <`}</pre>
+        {/* ASCII animal family */}
+        <pre className="text-muted-foreground text-xs leading-tight mt-4 mb-3 select-none">{`  /\\_/\\      /)__(\\     /)\\(\\      /\\ /\\  
+ ( o.o )   ( o  o )  ((\\ oo /)) (( o  o ))
+  > ^ <     (  uu )   (  vv  )   (( >< ))  
+   cat       dog       rabbit     dragon   
+
+   /\\_______/\\                             
+  / |  . .  | \\  <-- tiger                 
+ /  |  .v.  |  \\                           
+(___|_______|___)                          `}</pre>
 
         {/* Description */}
         <p className="text-muted-foreground text-sm mb-6">
@@ -88,10 +94,10 @@ export default async function Home() {
 
         {/* Topics */}
         <div className="mb-8">
-          <p className="text-muted-foreground text-xs mb-2">topics</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <p className="text-muted-foreground text-xs mb-3">topics</p>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-1">
             {TOPICS.map((topic) => (
-              <span key={topic} className="text-foreground text-sm hover:text-muted-foreground cursor-default transition-colors">
+              <span key={topic} className="text-foreground text-sm before:content-['•'] before:mr-2 before:text-muted-foreground">
                 {topic}
               </span>
             ))}
