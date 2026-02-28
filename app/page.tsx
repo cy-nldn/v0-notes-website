@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import type { Note } from '@/lib/supabase'
 import { SearchBox } from '@/components/SearchBox'
 import { NotesGrid } from '@/components/NotesGrid'
+import Link from 'next/link'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,8 +37,11 @@ export default async function Home() {
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold">notes</h1>
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="flex items-center gap-6 text-muted-foreground text-sm">
             <span>{notes.length} entries</span>
+            <Link href="/upload" className="text-foreground hover:text-secondary transition-colors underline">
+              upload
+            </Link>
           </div>
         </div>
         
@@ -45,9 +49,7 @@ export default async function Home() {
 
         {/* Description */}
         <p className="text-muted-foreground text-sm mt-6 mb-8 max-w-2xl leading-relaxed">
-          Lecture notes, definitions, and solutions. None of this is official. Add your own by editing
-          <br />
-          lib/notes.ts
+          Math lecture notes, definitions, and solutions. Community-driven. Upload your own notes above.
         </p>
 
         {/* Sections Navigation */}
