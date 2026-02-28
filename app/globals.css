@@ -4,40 +4,40 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Terminal theme colors - Myrient style red */
-  --background: #0d0d0d;
+  /* Clean minimal terminal theme */
+  --background: #000000;
   --foreground: #ffffff;
-  --card: #1a1a1a;
+  --card: #000000;
   --card-foreground: #ffffff;
-  --popover: #1a1a1a;
+  --popover: #000000;
   --popover-foreground: #ffffff;
-  --primary: #ff0000;
-  --primary-foreground: #0d0d0d;
-  --secondary: #ff0000;
-  --secondary-foreground: #0d0d0d;
-  --muted: #444444;
-  --muted-foreground: #888888;
-  --accent: #ff0000;
-  --accent-foreground: #0d0d0d;
+  --primary: #999999;
+  --primary-foreground: #000000;
+  --secondary: #ff4444;
+  --secondary-foreground: #000000;
+  --muted: #1a1a1a;
+  --muted-foreground: #666666;
+  --accent: #999999;
+  --accent-foreground: #000000;
   --destructive: #ff4444;
   --destructive-foreground: #ffffff;
-  --border: #333333;
-  --input: #1a1a1a;
-  --ring: #ff0000;
-  --chart-1: #ff0000;
-  --chart-2: #ff4444;
-  --chart-3: #aa0000;
-  --chart-4: #ff6666;
-  --chart-5: #cc0000;
+  --border: #1a1a1a;
+  --input: #0d0d0d;
+  --ring: #999999;
+  --chart-1: #999999;
+  --chart-2: #666666;
+  --chart-3: #333333;
+  --chart-4: #cccccc;
+  --chart-5: #aaaaaa;
   --radius: 0;
-  --sidebar: #0d0d0d;
+  --sidebar: #000000;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ff0000;
-  --sidebar-primary-foreground: #0d0d0d;
-  --sidebar-accent: #ff0000;
-  --sidebar-accent-foreground: #0d0d0d;
-  --sidebar-border: #333333;
-  --sidebar-ring: #ff0000;
+  --sidebar-primary: #999999;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #999999;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #1a1a1a;
+  --sidebar-ring: #999999;
 }
 
 @theme inline {

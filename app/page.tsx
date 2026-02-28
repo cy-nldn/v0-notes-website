@@ -1,8 +1,7 @@
-import { NotesList } from '@/components/NotesList'
-import { Terminal } from '@/components/Terminal'
-import { HeaderButtons } from '@/components/HeaderButtons'
 import { createClient } from '@supabase/supabase-js'
 import type { Note } from '@/lib/supabase'
+import { SearchBox } from '@/components/SearchBox'
+import { NotesGrid } from '@/components/NotesGrid'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,30 +31,37 @@ export default async function Home() {
   const notes = await getNotes()
 
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <main className="min-h-screen bg-background text-foreground font-mono">
+      <div className="max-w-full px-8 py-12">
         {/* Header */}
-        <Terminal title="math_notes">
-          <div className="space-y-4">
-            <div className="text-foreground">
-              <p className="text-lg font-bold">$ welcome to math notes</p>
-              <p className="text-muted-foreground text-sm mt-2">
-                share and discover handwritten math notes. simple. minimal. yours.
-              </p>
-            </div>
-            <HeaderButtons />
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl font-bold">notes</h1>
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <span>{notes.length} entries</span>
           </div>
-        </Terminal>
+        </div>
+        
+        <SearchBox />
 
-        {/* Notes List */}
-        <NotesList notes={notes} />
+        {/* Description */}
+        <p className="text-muted-foreground text-sm mt-6 mb-8 max-w-2xl leading-relaxed">
+          Lecture notes, definitions, and solutions. None of this is official. Add your own by editing
+          <br />
+          lib/notes.ts
+        </p>
 
-        {/* Footer */}
-        <Terminal>
-          <p className="text-muted-foreground text-xs">
-            $ math notes © 2024 | built with next.js, supabase & terminal energy
-          </p>
-        </Terminal>
+        {/* Sections Navigation */}
+        <div className="mb-8">
+          <p className="text-muted-foreground text-xs mb-3">sections</p>
+          <div className="flex gap-6">
+            <button className="text-foreground hover:text-secondary transition-colors">Year 1</button>
+            <button className="text-foreground hover:text-secondary transition-colors">Year 2</button>
+            <button className="text-foreground hover:text-secondary transition-colors">Year 3</button>
+          </div>
+        </div>
+
+        {/* Notes Grid */}
+        <NotesGrid notes={notes} />
       </div>
     </main>
   )
