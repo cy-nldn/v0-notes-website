@@ -15,9 +15,7 @@ async function getNotes(): Promise<Note[]> {
       .order('created_at', { ascending: false })
     if (error) return []
     return data || []
-  } catch {
-    return []
-  }
+  } catch { return [] }
 }
 
 async function getTopics(): Promise<string[]> {
@@ -26,13 +24,9 @@ async function getTopics(): Promise<string[]> {
       .from('topics')
       .select('name')
       .order('name', { ascending: true })
-    if (error || !data || data.length === 0) {
-      return FALLBACK_TOPICS
-    }
+    if (error || !data || data.length === 0) return FALLBACK_TOPICS
     return data.map((t: { name: string }) => t.name)
-  } catch {
-    return FALLBACK_TOPICS
-  }
+  } catch { return FALLBACK_TOPICS }
 }
 
 const FALLBACK_TOPICS = [
@@ -52,49 +46,109 @@ export default async function Home() {
   const [notes, topics] = await Promise.all([getNotes(), getTopics()])
 
   return (
-    <main className="min-h-screen bg-background text-foreground font-mono relative">
-      <div className="glitch-bg" />
-      <div className="glitch-content max-w-5xl mx-auto px-8 py-10">
+    <main className="min-h-screen bg-background text-foreground font-mono">
+      <div className="glitch-wrap glitch-layer-1 glitch-layer-2 max-w-5xl mx-auto px-8 py-12">
 
-        {/* Header */}
-        <div className="flex items-start justify-between mb-1">
-          <div>
-            <span className="font-bold text-foreground">misc. maths notes - chris</span>
-            <span className="text-muted-foreground text-sm ml-3">{notes.length} entries</span>
-          </div>
+        {/* ── Scattered ASCII top-left ── */}
+        <pre className="text-muted-foreground text-xs leading-tight select-none absolute left-4 top-8 opacity-20 hidden xl:block">{`  /\\_/\\
+ ( -.-)
+  > ♡ <
+  kitty`}</pre>
+
+        {/* ── Scattered ASCII top-right ── */}
+        <pre className="text-muted-foreground text-xs leading-tight select-none absolute right-4 top-8 opacity-20 hidden xl:block">{`  |\\  /|
+  | \\/ |
+  |    |
+  |____|
+  piano`}</pre>
+
+        {/* ── CENTRED HEADER ── */}
+        <div className="text-center mb-2">
+          <h1 className="glitch-text font-light tracking-[0.25em] text-base uppercase text-foreground">
+            c h r i s &apos; s &nbsp; r a n d o m &nbsp; m a t h s &nbsp; n o t e s
+          </h1>
+          <p className="text-muted-foreground text-xs tracking-widest mt-1">
+            {notes.length} entries &nbsp;·&nbsp; terminal v2
+          </p>
+        </div>
+
+        {/* ── Nav ── */}
+        <div className="flex justify-center mb-10 mt-4">
           <a
             href="/upload"
-            className="border border-muted-foreground text-muted-foreground text-sm px-3 py-0.5 hover:border-foreground hover:text-foreground transition-colors"
+            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
           >
             / upload
           </a>
         </div>
 
-        {/* ASCII art */}
-        <pre className="text-muted-foreground text-xs leading-tight mt-4 mb-3 select-none">{`  /\\_/\\      /)__(\\     /)\\(\\      /\\ /\\  \n ( o.o )   ( o  o )  ((\\ oo /)) (( o  o ))\n  > ^ <     (  uu )   (  vv  )   (( >< ))  \n   cat       dog       rabbit     dragon   \n\n   /\\_______/\\                             \n  / |  . .  | \\  <-- tiger                 \n /  |  .v.  |  \\                           \n(___|_______|___)                          `}</pre>
+        {/* ── ASCII strip ── */}
+        <div className="flex justify-between items-end mb-8 opacity-30 select-none overflow-hidden">
+          <pre className="text-muted-foreground text-xs leading-tight">{`  /\\_/\\
+ ( o.o )
+  > ^ <
+   cat`}</pre>
+          <pre className="text-muted-foreground text-xs leading-tight">{` /)__(\\
+( o  o )
+ (  uu )
+  dog`}</pre>
+          <pre className="text-muted-foreground text-xs leading-tight">{`  /)(\\
+((\\ oo
+ (  vv)
+rabbit`}</pre>
+          <pre className="text-muted-foreground text-xs leading-tight">{` /\\ /\\
+(o  o )
+(( >< ))
+dragon`}</pre>
+          <pre className="text-muted-foreground text-xs leading-tight">{`/\\_____/\\
+| . . |
+|  v  |
+ tiger`}</pre>
+        </div>
 
-        <p className="text-muted-foreground text-sm mb-6">
+        <p className="text-muted-foreground text-xs mb-6 text-center tracking-wider">
           some random notes ive taken :)
         </p>
 
-        <hr className="border-border mb-6" />
+        <hr className="border-border mb-8" />
 
-        {/* Topics — 3 columns */}
-        <div className="mb-8">
-          <p className="text-muted-foreground text-xs mb-3">topics</p>
+        {/* ── Topics — 3 columns ── */}
+        <div className="mb-10">
+          <p className="text-muted-foreground text-xs mb-4 tracking-widest uppercase">— topics —</p>
           <div className="grid grid-cols-3 gap-x-8 gap-y-1">
             {topics.map((topic) => (
-              <span key={topic} className="text-foreground text-sm before:content-['•'] before:mr-2 before:text-muted-foreground">
+              <span key={topic} className="text-foreground text-xs before:content-['›'] before:mr-2 before:text-muted-foreground">
                 {topic}
               </span>
             ))}
           </div>
         </div>
 
-        <hr className="border-border mb-8" />
+        <hr className="border-border mb-10" />
 
-        {/* Notes Grid */}
+        {/* ── Notes — 2 columns ── */}
         <NotesGrid notes={notes} />
+
+        {/* ── Footer ASCII ── */}
+        <div className="mt-16 mb-4 flex justify-center opacity-15 select-none">
+          <pre className="text-muted-foreground text-xs leading-tight">{`
+    ___________________________
+   |  _____________________  |
+   | |                     | |
+   | |   > maths.notes     | |
+   | |   loading...        | |
+   | |   ████████░░  80%   | |
+   | |_____________________| |
+   |_________________________|
+          |           |
+         /             \\
+        /_______________\\
+              |||
+          ___|||___
+         |_________|
+             |||
+          terminal`}</pre>
+        </div>
 
       </div>
     </main>

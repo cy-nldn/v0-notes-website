@@ -10,29 +10,32 @@ export default function UploadPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground font-mono">
-      <div className="max-w-4xl mx-auto px-8 py-10">
+      <div className="glitch-wrap glitch-layer-1 max-w-5xl mx-auto px-8 py-12">
 
-        {/* Header */}
-        <div className="flex items-start justify-between mb-1">
-          <div>
-            <span className="font-bold text-foreground">misc. maths notes - chris</span>
-            <span className="text-muted-foreground text-sm ml-3">
-              {authenticated ? 'upload' : 'restricted'}
-            </span>
-          </div>
+        {/* Centred header */}
+        <div className="text-center mb-2">
+          <h1 className="glitch-text font-light tracking-[0.25em] text-base uppercase text-foreground">
+            c h r i s &apos; s &nbsp; r a n d o m &nbsp; m a t h s &nbsp; n o t e s
+          </h1>
+          <p className="text-muted-foreground text-xs tracking-widest mt-1">
+            {authenticated ? 'upload / manage' : 'restricted access'}
+          </p>
+        </div>
+
+        <div className="flex justify-center mb-10 mt-4">
           <Link
             href="/"
-            className="border border-muted-foreground text-muted-foreground text-sm px-3 py-0.5 hover:border-foreground hover:text-foreground transition-colors"
+            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
           >
             / back
           </Link>
         </div>
 
-        <p className="text-muted-foreground text-sm mt-2 mb-6">
-          {authenticated ? 'add a new note to the list.' : 'this area is password protected.'}
-        </p>
-
         <hr className="border-border mb-8" />
+
+        <p className="text-muted-foreground text-xs mb-8 tracking-wider">
+          {authenticated ? 'add a new note or manage existing ones.' : 'this area is password protected.'}
+        </p>
 
         {authenticated ? (
           <UploadForm />
