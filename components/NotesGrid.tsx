@@ -11,55 +11,40 @@ export function NotesGrid({ notes }: NotesGridProps) {
   if (notes.length === 0) {
     return (
       <div className="text-muted-foreground text-sm">
-        No notes found. Try uploading some!
+        no notes yet. try uploading some!
       </div>
     )
   }
 
   // Group notes by subject
-  const groupedByYear: { [key: string]: Note[] } = {}
-  
+  const grouped: { [key: string]: Note[] } = {}
   notes.forEach(note => {
-    const year = note.subject || 'Uncategorized'
-    if (!groupedByYear[year]) {
-      groupedByYear[year] = []
-    }
-    groupedByYear[year].push(note)
+    const key = note.subject || 'uncategorized'
+    if (!grouped[key]) grouped[key] = []
+    grouped[key].push(note)
   })
 
   return (
-    <div className="space-y-12">
-      {Object.entries(groupedByYear).map(([year, yearNotes]) => (
-        <div key={year}>
-          {/* Year header */}
-          <h2 className="text-foreground font-bold text-lg mb-2">{year}</h2>
-          <p className="text-muted-foreground text-sm mb-6">
-            {yearNotes.length} {yearNotes.length === 1 ? 'note' : 'notes'}
+    <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+      {Object.entries(grouped).map(([subject, subNotes]) => (
+        <div key={subject}>
+          <h2 className="text-foreground font-bold text-sm mb-1">{subject}</h2>
+          <p className="text-muted-foreground text-xs mb-3">
+            {subNotes.length} {subNotes.length === 1 ? 'note' : 'notes'}
           </p>
-
-          {/* Course list */}
-          <div className="space-y-4">
-            {yearNotes.map((note) => (
-              <div key={note.id} className="flex items-center justify-between border-b border-muted py-3 hover:border-foreground transition-colors">
-                <div className="flex-1">
-                  <Link href={`/notes/${note.id}`} className="text-foreground hover:text-secondary font-bold transition-colors">
+          <div className="space-y-2">
+            {subNotes.map((note) => (
+              <div key={note.id} className="flex items-center justify-between border-b border-muted py-2 hover:border-foreground transition-colors">
+                <div className="flex-1 min-w-0">
+                  <Link href={`/notes/${note.id}`} className="text-foreground hover:text-secondary text-sm transition-colors truncate block">
                     {note.title}
                   </Link>
-                  <p className="text-muted-foreground text-xs mt-1">
+                  <p className="text-muted-foreground text-xs mt-0.5">
                     {new Date(note.created_at).getFullYear()}
                   </p>
                 </div>
-
-                {/* Download buttons */}
-                <div className="flex gap-2">
-                  <button className="border border-primary text-primary px-3 py-1 text-xs hover:border-foreground hover:text-foreground transition-colors">
-                    PDF
-                  </button>
-                  {note.description && (
-                    <button className="border border-secondary text-secondary px-3 py-1 text-xs hover:border-foreground hover:text-foreground transition-colors">
-                      {note.description}
-                    </button>
-                  )}
+                <div className="flex gap-2 ml-2 shrink-0">
+                  <span className="border border-primary text-primary px-2 py-0.5 text-xs">PDF</span>
                 </div>
               </div>
             ))}
