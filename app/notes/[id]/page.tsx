@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Terminal } from '@/components/Terminal'
 import { createClient } from '@supabase/supabase-js'
 import type { Note } from '@/lib/supabase'
 
@@ -23,50 +22,40 @@ export default function NotePage() {
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        // Get note metadata
         const { data, error: fetchError } = await supabase
           .from('notes')
           .select('*')
           .eq('id', id)
           .single()
 
-        if (fetchError) {
-          setError('$ error: note not found')
-          return
-        }
+        if (fetchError) { setError('note not found'); return }
 
         setNote(data)
 
-        // Get signed URL for PDF
         const { data: urlData } = supabase.storage
           .from('pdfs')
           .getPublicUrl(data.file_path)
 
         setPdfUrl(urlData.publicUrl)
 
-        // Increment view count
         await supabase
           .from('notes')
           .update({ view_count: (data.view_count || 0) + 1 })
           .eq('id', id)
-      } catch (err) {
-        console.error('Error:', err)
-        setError('$ error: failed to load note')
+      } catch {
+        setError('failed to load note')
       } finally {
         setLoading(false)
       }
     }
-
     fetchNote()
   }, [id])
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-        <div className="max-w-4xl mx-auto">
-          <Terminal title="loading">
-            <p className="text-muted-foreground">$ fetching note data...</p>
-          </Terminal>
+      <main className="min-h-screen bg-background text-foreground font-mono">
+        <div className="glitch-wrap max-w-5xl mx-auto px-8 py-12">
+          <p className="text-muted-foreground text-xs tracking-widest">fetching...</p>
         </div>
       </main>
     )
@@ -74,88 +63,90 @@ export default function NotePage() {
 
   if (error || !note || !pdfUrl) {
     return (
-      <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <Terminal title="error">
-            <p className="text-destructive mb-4">{error || '$ note not found'}</p>
-            <Link
-              href="/"
-              className="text-foreground hover:text-secondary underline"
-            >
-              ← back to notes
-            </Link>
-          </Terminal>
+      <main className="min-h-screen bg-background text-foreground font-mono">
+        <div className="glitch-wrap max-w-5xl mx-auto px-8 py-12">
+          <p className="text-destructive text-sm mb-4">{error || 'note not found'}</p>
+          <Link href="/" className="text-muted-foreground text-xs hover:text-foreground transition-colors">← back</Link>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 font-mono">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <Terminal title={note.title}>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <p className="text-muted-foreground text-xs">$ subject</p>
-                <p className="text-accent font-bold">{note.subject}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">$ views</p>
-                <p className="text-secondary font-bold">{note.view_count}</p>
-              </div>
-            </div>
-            {note.description && (
-              <div>
-                <p className="text-muted-foreground text-xs">$ description</p>
-                <p className="text-foreground text-sm">{note.description}</p>
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-6 pt-2 border-t-2 border-muted">
-              <div>
-                <p className="text-muted-foreground text-xs">$ uploaded by</p>
-                <p className="text-foreground">{note.uploaded_by}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">$ date</p>
-                <p className="text-foreground">
-                  {new Date(note.created_at).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Terminal>
+    <main className="min-h-screen bg-background text-foreground font-mono">
+      <div className="glitch-wrap glitch-layer-1 max-w-5xl mx-auto px-8 py-12">
 
-        {/* PDF Viewer */}
-        <Terminal title="preview">
-          <div className="bg-background p-4 border-2 border-muted">
-            <iframe
-              src={pdfUrl}
-              className="w-full h-[600px]"
-              title={note.title}
-            />
+        {/* Centred header */}
+        <div className="text-center mb-2">
+          <h1 className="glitch-text font-light tracking-[0.25em] text-base uppercase text-foreground">
+            c h r i s &apos; s &nbsp; r a n d o m &nbsp; m a t h s &nbsp; n o t e s
+          </h1>
+          <p className="text-muted-foreground text-xs tracking-widest mt-1">
+            {note.title}
+          </p>
+        </div>
+
+        <div className="flex justify-center mb-10 mt-4">
+          <Link
+            href="/"
+            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
+          >
+            / back
+          </Link>
+        </div>
+
+        <hr className="border-border mb-8" />
+
+        {/* Note metadata */}
+        <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-8 text-sm">
+          <div>
+            <p className="text-muted-foreground text-xs tracking-widest uppercase mb-1">topic</p>
+            <p className="text-foreground">{note.subject}</p>
           </div>
-        </Terminal>
+          <div>
+            <p className="text-muted-foreground text-xs tracking-widest uppercase mb-1">date</p>
+            <p className="text-foreground">{new Date(note.created_at).toLocaleDateString()}</p>
+          </div>
+          {note.description && (
+            <div className="col-span-2">
+              <p className="text-muted-foreground text-xs tracking-widest uppercase mb-1">description</p>
+              <p className="text-foreground">{note.description}</p>
+            </div>
+          )}
+        </div>
+
+        <hr className="border-border mb-8" />
+
+        {/* PDF viewer */}
+        <div className="mb-8">
+          <p className="text-muted-foreground text-xs tracking-widest uppercase mb-4">— preview —</p>
+          <iframe
+            src={pdfUrl}
+            className="w-full border border-border"
+            style={{ height: '700px' }}
+            title={note.title}
+          />
+        </div>
+
+        <hr className="border-border mb-6" />
 
         {/* Actions */}
-        <Terminal>
-          <div className="flex gap-4 items-center justify-between">
-            <Link
-              href="/"
-              className="bg-background border-2 border-foreground text-foreground px-6 py-2 font-bold hover:bg-foreground hover:text-background transition-colors inline-block"
-            >
-              ← back to notes
-            </Link>
-            <a
-              href={pdfUrl}
-              download={note.file_name}
-              className="bg-foreground text-background px-6 py-2 font-bold hover:bg-secondary hover:text-background transition-colors inline-block"
-            >
-              $ download
-            </a>
-          </div>
-        </Terminal>
+        <div className="flex justify-between items-center">
+          <Link
+            href="/"
+            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
+          >
+            / back to notes
+          </Link>
+          <a
+            href={pdfUrl}
+            download
+            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
+          >
+            / download
+          </a>
+        </div>
+
       </div>
     </main>
   )
