@@ -4,25 +4,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #e8e8e8;
-  --card: #0a0a0a;
-  --card-foreground: #e8e8e8;
-  --popover: #0a0a0a;
-  --popover-foreground: #e8e8e8;
-  --primary: #888888;
-  --primary-foreground: #0a0a0a;
-  --secondary: #ff4444;
-  --secondary-foreground: #0a0a0a;
-  --muted: #1c1c1c;
-  --muted-foreground: #555555;
-  --accent: #888888;
-  --accent-foreground: #0a0a0a;
-  --destructive: #ff4444;
+  --background: #080b0b;
+  --foreground: #e8edec;
+  --card: #080b0b;
+  --card-foreground: #e8edec;
+  --popover: #080b0b;
+  --popover-foreground: #e8edec;
+  --primary: #5ecfbf;        /* light teal */
+  --primary-foreground: #080b0b;
+  --secondary: #3ab8a8;      /* deeper teal */
+  --secondary-foreground: #080b0b;
+  --muted: #111a19;
+  --muted-foreground: #4a6b67;
+  --accent: #5ecfbf;
+  --accent-foreground: #080b0b;
+  --destructive: #ff5555;
   --destructive-foreground: #ffffff;
-  --border: #1e1e1e;
-  --input: #111111;
-  --ring: #888888;
+  --border: #152220;
+  --input: #0d1514;
+  --ring: #5ecfbf;
   --radius: 0;
 }
 
@@ -56,10 +56,10 @@
 
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; }
+  body { @apply bg-background text-foreground; font-size: 14px; }
 }
 
-/* ─── GLITCH BACKGROUND ─────────────────────────────────────────── */
+/* ─── GLITCH BACKGROUND ──────────────────────────────────────────── */
 
 @keyframes scanline-move {
   0%   { transform: translateY(-100px); }
@@ -91,8 +91,8 @@
 
 @keyframes rgb-drift {
   0%, 100% { text-shadow: none; }
-  89%  { text-shadow: -2px 0 rgba(255,0,0,0.15), 2px 0 rgba(0,255,255,0.15); }
-  90%  { text-shadow: 2px 0 rgba(255,0,0,0.2), -2px 0 rgba(0,255,255,0.2); }
+  89%  { text-shadow: -2px 0 rgba(94,207,191,0.2), 2px 0 rgba(255,100,100,0.15); }
+  90%  { text-shadow: 2px 0 rgba(94,207,191,0.25), -2px 0 rgba(255,100,100,0.2); }
   91%  { text-shadow: none; }
 }
 
@@ -110,6 +110,11 @@
   100% { background-position: 0 0; }
 }
 
+@keyframes teal-pulse {
+  0%, 100% { opacity: 0.04; }
+  50%       { opacity: 0.07; }
+}
+
 /* scanline overlay */
 body::before {
   content: '';
@@ -121,26 +126,38 @@ body::before {
     0deg,
     transparent,
     transparent 3px,
-    rgba(0, 0, 0, 0.18) 3px,
-    rgba(0, 0, 0, 0.18) 4px
+    rgba(0,0,0,0.15) 3px,
+    rgba(0,0,0,0.15) 4px
   );
   animation: noise-shift 6s steps(1) infinite;
 }
 
-/* moving highlight scanline */
+/* moving teal scanline */
 body::after {
   content: '';
   position: fixed;
   left: 0; right: 0;
-  height: 120px;
+  height: 140px;
   z-index: 11;
   pointer-events: none;
   background: linear-gradient(
     transparent,
-    rgba(255, 255, 255, 0.022),
+    rgba(94, 207, 191, 0.028),
     transparent
   );
-  animation: scanline-move 9s linear infinite;
+  animation: scanline-move 10s linear infinite;
+}
+
+/* subtle teal vignette glow at top */
+.glitch-wrap::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(94,207,191,0.4), transparent);
+  z-index: 20;
+  pointer-events: none;
+  animation: teal-pulse 4s ease-in-out infinite;
 }
 
 .glitch-wrap {
@@ -148,19 +165,78 @@ body::after {
   position: relative;
   z-index: 1;
 }
+.glitch-layer-1 { animation: glitch-slice-1 22s infinite; }
+.glitch-layer-2 { animation: glitch-slice-2 28s infinite; }
+.glitch-text    { animation: rgb-drift 22s infinite; }
 
-.glitch-layer-1 {
-  animation: glitch-slice-1 22s infinite;
-}
+/* teal accent utilities */
+.teal  { color: #5ecfbf; }
+.teal-dim { color: #3a8f85; }
+.border-teal { border-color: #5ecfbf; }
 
-.glitch-layer-2 {
-  animation: glitch-slice-2 28s infinite;
-}
-
-.glitch-text {
-  animation: rgb-drift 22s infinite;
-}
-
-/* ─── GEIST MONO import ─────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap');
- 
+
+/* ─── TEAL UTILITY CLASSES ─────────────────────────────────────── */
+.text-teal        { color: #5ecfbf !important; }
+.text-teal-dim    { color: #3a8f85 !important; }
+.text-teal-muted  { color: #4a6b67 !important; }
+.border-teal-dim  { border-color: #3a8f85 !important; }
+.border-teal      { border-color: #5ecfbf !important; }
+.bg-page          { background: #080b0b; }
+
+/* header */
+.site-header      { color: #e8edec; letter-spacing: 0.3em; font-size: 1.125rem; }
+.site-subheader   { color: #3a8f85; font-size: 0.875rem; letter-spacing: 0.15em; }
+
+/* nav button */
+.nav-btn {
+  border: 1px solid #3a8f85;
+  color: #3a8f85;
+  font-size: 0.875rem;
+  padding: 0.25rem 1.25rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: inherit;
+}
+.nav-btn:hover { border-color: #5ecfbf; color: #5ecfbf; }
+
+/* section label */
+.section-label {
+  color: #3a8f85;
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* topic item */
+.topic-item       { color: #e8edec; font-size: 0.875rem; }
+.topic-arrow      { color: #5ecfbf; margin-right: 0.5rem; }
+
+/* note group */
+.note-group-title { color: #5ecfbf; font-size: 0.875rem; font-weight: 600; }
+.note-group-count { color: #3a8f85; font-size: 0.75rem; }
+.note-link        { color: #e8edec; font-size: 0.875rem; transition: color 0.2s; }
+.note-link:hover  { color: #5ecfbf; }
+.note-year        { color: #4a6b67; font-size: 0.75rem; }
+.note-badge {
+  border: 1px solid #3a8f85;
+  color: #3a8f85;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+}
+.note-divider     { border-color: #152220; }
+
+/* ascii */
+.ascii-art        { color: #3a8f85; opacity: 0.55; }
+.ascii-corner     { color: #3a8f85; opacity: 0.4; }
+.ascii-footer     { color: #3a8f85; opacity: 0.35; }
+.desc-text        { color: #4a6b67; font-size: 0.875rem; }
+
+/* divider */
+.site-hr          { border-color: #152220; }
+
+/* teal scanline glow override */
+body::after {
+  background: linear-gradient(transparent, rgba(94,207,191,0.03), transparent) !important;
+}

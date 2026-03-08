@@ -13,9 +13,7 @@ const supabase = createClient(
 async function getNotes(): Promise<Note[]> {
   try {
     const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .from('notes').select('*').order('created_at', { ascending: false })
     if (error) return []
     return data || []
   } catch { return [] }
@@ -24,9 +22,7 @@ async function getNotes(): Promise<Note[]> {
 async function getTopics(): Promise<string[]> {
   try {
     const { data, error } = await supabase
-      .from('topics')
-      .select('name')
-      .order('name', { ascending: true })
+      .from('topics').select('name').order('name', { ascending: true })
     if (error || !data || data.length === 0) return FALLBACK_TOPICS
     return data.map((t: { name: string }) => t.name)
   } catch { return FALLBACK_TOPICS }
@@ -49,108 +45,100 @@ export default async function Home() {
   const [notes, topics] = await Promise.all([getNotes(), getTopics()])
 
   return (
-    <main className="min-h-screen bg-background text-foreground font-mono">
+    <main className="min-h-screen bg-page text-foreground font-mono">
       <div className="glitch-wrap glitch-layer-1 glitch-layer-2 max-w-5xl mx-auto px-8 py-12">
 
-        {/* ── Scattered ASCII top-left ── */}
-        <pre className="text-muted-foreground text-xs leading-tight select-none absolute left-4 top-8 opacity-20 hidden xl:block">{`  /\\_/\\
+        {/* corner ASCII */}
+        <pre className="ascii-corner text-sm leading-tight select-none absolute left-6 top-6 hidden xl:block">{`  /\\_/\\
  ( -.-)
   > ♡ <
   kitty`}</pre>
+        <pre className="ascii-corner text-sm leading-tight select-none absolute right-6 top-6 hidden xl:block">{` /\\___/\\
+(  o o  )
+ \\  ^  /
+  bunny`}</pre>
 
-        {/* ── Scattered ASCII top-right ── */}
-        <pre className="text-muted-foreground text-xs leading-tight select-none absolute right-4 top-8 opacity-20 hidden xl:block">{`  |\\  /|
-  | \\/ |
-  |    |
-  |____|
-  piano`}</pre>
-
-        {/* ── CENTRED HEADER ── */}
-        <div className="text-center mb-2">
-          <h1 className="glitch-text font-light tracking-[0.25em] text-base uppercase text-foreground">
+        {/* header */}
+        <div className="text-center mb-3">
+          <h1 className="glitch-text site-header font-light uppercase">
             c h r i s &apos; s &nbsp; r a n d o m &nbsp; m a t h s &nbsp; n o t e s
           </h1>
-          <p className="text-muted-foreground text-xs tracking-widest mt-1">
+          <p className="site-subheader mt-2">
             {notes.length} entries &nbsp;·&nbsp; terminal v2
           </p>
         </div>
 
-        {/* ── Nav ── */}
-        <div className="flex justify-center mb-10 mt-4">
-          <a
-            href="/upload"
-            className="border border-muted-foreground text-muted-foreground text-xs px-4 py-1 tracking-widest hover:border-foreground hover:text-foreground transition-colors uppercase"
-          >
-            / upload
-          </a>
+        {/* nav */}
+        <div className="flex justify-center mb-10 mt-5">
+          <a href="/upload" className="nav-btn">/ upload</a>
         </div>
 
-        {/* ── ASCII strip ── */}
-        <div className="flex justify-between items-end mb-8 opacity-30 select-none overflow-hidden">
-          <pre className="text-muted-foreground text-xs leading-tight">{`  /\\_/\\
- ( o.o )
-  > ^ <
-   cat`}</pre>
-          <pre className="text-muted-foreground text-xs leading-tight">{` /)__(\\
-( o  o )
- (  uu )
-  dog`}</pre>
-          <pre className="text-muted-foreground text-xs leading-tight">{`  /)(\\
-((\\ oo
- (  vv)
-rabbit`}</pre>
-          <pre className="text-muted-foreground text-xs leading-tight">{` /\\ /\\
-(o  o )
-(( >< ))
-dragon`}</pre>
-          <pre className="text-muted-foreground text-xs leading-tight">{`/\\_____/\\
-| . . |
-|  v  |
- tiger`}</pre>
+        {/* ASCII strip */}
+        <div className="flex justify-between items-end mb-10 select-none overflow-hidden">
+          <pre className="ascii-art text-sm leading-snug">{`   /\\_/\\
+  ( o.o )
+   > ^ <
+    cat`}</pre>
+          <pre className="ascii-art text-sm leading-snug">{`  /)__(\\
+ ( o  o )
+  (  uu )
+   dog`}</pre>
+          <pre className="ascii-art text-sm leading-snug">{`   /)(\\
+ ((/ oo\\
+  (  vv )
+  rabbit`}</pre>
+          <pre className="ascii-art text-sm leading-snug">{`  /\\ /\\
+ (o  o )
+ (( >< ))
+  dragon`}</pre>
+          <pre className="ascii-art text-sm leading-snug">{` /\\_____/\\
+ | . . . |
+ |   ^   |
+  tiger`}</pre>
         </div>
 
-        <p className="text-muted-foreground text-xs mb-6 text-center tracking-wider">
+        <p className="desc-text mb-6 text-center tracking-wider">
           some random notes ive taken :)
         </p>
 
-        <hr className="border-border mb-8" />
+        <hr className="site-hr mb-8" />
 
-        {/* ── Topics — 3 columns ── */}
+        {/* Topics */}
         <div className="mb-10">
-          <p className="text-muted-foreground text-xs mb-4 tracking-widest uppercase">— topics —</p>
-          <div className="grid grid-cols-3 gap-x-8 gap-y-1">
+          <p className="section-label mb-4">— topics —</p>
+          <div className="grid grid-cols-3 gap-x-8 gap-y-1.5">
             {topics.map((topic) => (
-              <span key={topic} className="text-foreground text-xs before:content-['›'] before:mr-2 before:text-muted-foreground">
-                {topic}
+              <span key={topic} className="topic-item">
+                <span className="topic-arrow">›</span>{topic}
               </span>
             ))}
           </div>
         </div>
 
-        <hr className="border-border mb-10" />
+        <hr className="site-hr mb-10" />
 
-        {/* ── Notes — 2 columns ── */}
         <NotesGrid notes={notes} />
 
-        {/* ── Footer ASCII ── */}
-        <div className="mt-16 mb-4 flex justify-center opacity-15 select-none">
-          <pre className="text-muted-foreground text-xs leading-tight">{`
-    ___________________________
-   |  _____________________  |
-   | |                     | |
-   | |   > maths.notes     | |
-   | |   loading...        | |
-   | |   ████████░░  80%   | |
-   | |_____________________| |
-   |_________________________|
-          |           |
-         /             \\
-        /_______________\\
-              |||
-          ___|||___
-         |_________|
-             |||
-          terminal`}</pre>
+        {/* footer ASCII */}
+        <div className="mt-20 mb-4 flex justify-center select-none">
+          <pre className="ascii-footer text-sm leading-snug">{`
+     _____________________________
+    |   _______________________   |
+    |  |                       |  |
+    |  |   > maths.notes_      |  |
+    |  |                       |  |
+    |  |   loading corpus...   |  |
+    |  |   [=========>  ] 88%  |  |
+    |  |_______________________|  |
+    |_____________________________|
+            |           |
+           / \\         / \\
+          /   \\_______/   \\
+                 |||
+             ____|||____
+            |___________|
+                 |||
+              terminal`}</pre>
         </div>
 
       </div>
